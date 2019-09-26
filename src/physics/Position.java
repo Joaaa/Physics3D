@@ -50,4 +50,8 @@ public class Position {
 
         return new Position(this.location.add(translation), newRotation);
     }
+
+    public Matrix4f getTransformation() {
+        return getRotation().leftMult(Matrix4f.getTranslationMatrix(getLocation()));
+    }
 }

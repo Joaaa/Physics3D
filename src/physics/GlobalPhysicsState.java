@@ -1,8 +1,10 @@
 package physics;
 
+import Utilities.Vector4f;
 import collision.CollisionPoint;
 import collision.CollisionResult;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -55,9 +57,14 @@ public class GlobalPhysicsState {
             return;
         CollisionResult result = state1.getWorldObject().getCollisionModel().checkCollision(state2.getWorldObject().getCollisionModel());
         for(CollisionPoint collisionPoint: result.getCollisionPoints()) {
-            Force force1 = new Force(collisionPoint.getObj2Normal().multiply(collisionPoint.getCollisionDepth()*1e4f));
+            Vector4f normal = collisionPoint.getNormal();
+            if(normal.dotProduct(state1.getPosition().getLocation().add(collisionPoint.getPoint().getInverted())) < 0)
+                normal = normal.getInverted();
+            Force force1 = new Force(normal.multiply(collisionPoint.getCollisionDepth()*1e4f));
             der1.addForce(force1);
-            Force force2 = new Force(collisionPoint.getObj1Normal().multiply(collisionPoint.getCollisionDepth()*1e4f));
+
+            normal = normal.getInverted();
+            Force force2 = new Force(normal.multiply(collisionPoint.getCollisionDepth()*1e4f));
             der2.addForce(force2 );
 
             der1.addTorque(Torque.fromForce(force1, collisionPoint.getPoint().add(state1.getPosition().getLocation().getInverted())));

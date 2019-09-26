@@ -18,12 +18,8 @@ public class CollisionPoint {
         return point;
     }
 
-    public Vector4f getObj1Normal() {
+    public Vector4f getNormal() {
         return normal;
-    }
-
-    public Vector4f getObj2Normal() {
-        return normal.getInverted();
     }
 
     public float getCollisionDepth() {

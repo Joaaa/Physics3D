@@ -7,8 +7,6 @@ public interface IMesh {
 
     public Matrix4f getModelMatrix();
 
-    public int getVertexAmount();
-
     public VertexBuffer getVertexBuffer();
 
 }
