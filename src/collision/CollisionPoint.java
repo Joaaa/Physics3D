@@ -26,4 +26,8 @@ public class CollisionPoint {
         return collisionDepth;
     }
 
+    @Override
+    public String toString() {
+        return "CollisionPoint: [p="+getPoint()+", n="+getNormal()+", d="+getCollisionDepth()+"]";
+    }
 }

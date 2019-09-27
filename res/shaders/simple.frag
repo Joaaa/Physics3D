@@ -40,7 +40,7 @@ void main(){
     if (dot(frag_normal, lightDir) > 0.0)  {
       specularReflection = vec3(0.0, 0.0, 0.0);
     } else {
-      specularReflection = 0.3 * vec3(1, 1, 1) * pow(max(0.0, dot(reflect(lightDir, frag_normal), viewDirection)), 5);
+      specularReflection = 1 * vec3(1, 1, 1) * pow(max(0.0, dot(reflect(lightDir, frag_normal), viewDirection)), 5);
     }
 
     vec4 posInShadow = (shadowMatrix*frag_position);
@@ -50,10 +50,10 @@ void main(){
     float visibility = 1;
     float shadowStrength = 0.4;
     for(int i = 0; i < 16; i++){
-        if(depth-((2*texture(shadowTexture, shadowUv + poissonDisk[i]/1000).r)-1) > 0.005*tan(acos(clamp(diffuse, 0, 1)))){
+        if(depth-((2*texture(shadowTexture, shadowUv + poissonDisk[i]/200).r)-1) > 0.05*tan(acos(clamp(diffuse, 0.2, 1)))){
             visibility -= shadowStrength/16;
         }
     }
 
-	outColor = vec4((color*diffuse+specularReflection)*visibility, 1);
+	outColor = vec4((color*diffuse*0.8+specularReflection*0.2)*visibility, 1);
 }

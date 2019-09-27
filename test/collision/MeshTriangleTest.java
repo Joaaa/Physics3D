@@ -8,13 +8,31 @@ class MeshTriangleTest {
 
     @org.junit.jupiter.api.Test
     void checkCollision() {
-        MeshTriangle triangle = new MeshTriangle(new Vector4f(0, 0, 0, 1), new Vector4f(1, 0, 0, 1), new Vector4f(0, 1, 0, 1));
-        assertNotNull(triangle.checkCollision(new Vector4f(0, 0, 1, 1), new Vector4f(0.5f, 0.5f, -0.5f, 1)));
-        assertNull(triangle.checkCollision(new Vector4f(0, 0, 1, 1), new Vector4f(-0.1f, 0.5f, -0.5f, 1)));
-        assertNull(triangle.checkCollision(new Vector4f(0, 0, 1, 1), new Vector4f(0.5f, -0.1f, -0.5f, 1)));
+        MeshTriangle triangle1 = new MeshTriangle(new Vector4f(0, 0, 0, 1), new Vector4f(1, 0, 0, 1), new Vector4f(0, 1, 0, 1));
+        MeshTriangle triangle2 = new MeshTriangle(new Vector4f(0, 0, -1, 1), new Vector4f(1, 0, 1, 1), new Vector4f(0, 1, 1, 1));
+        CollisionPoint p = triangle1.checkCollision(triangle2);
+        assertNotNull(p);
+        System.out.println(p.getPoint());
+        System.out.println(p.getNormal());
+        System.out.println(p.getCollisionDepth());
 
-//        Triangle: [p1=(0.0, 0.0, -2.5, 1.0), p2=(0.0, 0.0, 2.5, 1.0), p3=(5.0, 0.0, -2.5, 1.0)], (1.0, 0.05, 0.0, 1.0), (0.9, -0.05, -0.1, 1.0)
-        triangle = new MeshTriangle(new Vector4f(0.0f, 0.0f, -2.5f, 1.0f), new Vector4f(0.0f, 0.0f, 2.5f, 1.0f), new Vector4f(5.0f, 0.0f, -2.5f, 1.0f));
-        assertNotNull(triangle.checkCollision(new Vector4f(1, 0.05f, 0, 1), new Vector4f(0.9f, -0.05f, -0.1f, 1)));
+        CollisionPoint p2 = triangle2.checkCollision(triangle1);
+        assertNotNull(p2);
+        System.out.println(p2.getPoint());
+        System.out.println(p2.getNormal());
+        System.out.println(p2.getCollisionDepth());
+        assertEquals(p.getPoint(), p2.getPoint());
+        assertEquals(p.getNormal(), p2.getNormal());
+        assertEquals(p.getCollisionDepth(), p2.getCollisionDepth());
     }
+
+    @org.junit.jupiter.api.Test
+    void checkNoCollision() {
+        MeshTriangle triangle1 = new MeshTriangle(new Vector4f(0.5f, 9.5f, 4.5f, 1.0f), new Vector4f(0.5f, 10.5f, 4.5f, 1.0f), new Vector4f(0.5f, 9.5f, 5.5f, 1.0f));
+        MeshTriangle triangle2 = new MeshTriangle(new Vector4f(-5.0f, -5.0f, 5.0f, 1.0f), new Vector4f(5.0f, -5.0f, 5.0f, 1.0f), new Vector4f(-5.0f, 5.0f, 5.0f, 1.0f));
+        assertNull(triangle1.checkCollision(triangle2));
+        assertNull(triangle2.checkCollision(triangle1));
+    }
+
+
 }

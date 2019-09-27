@@ -14,7 +14,7 @@ public class ShadowMap {
 		texture = new Texture();
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, frameBuffer);
 		texture.bind();
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL30.GL_R16, quality, quality, 0, GL11.GL_RED, GL11.GL_FLOAT, 0);
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL30.GL_R16, quality, quality, 0, GL11.GL_RED, GL11.GL_BYTE, 0);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);

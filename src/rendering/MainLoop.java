@@ -2,6 +2,7 @@ package rendering;
 
 import Utilities.*;
 import collision.CollisionMesh;
+import collision.CollisionSphere;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
@@ -19,17 +20,24 @@ public class MainLoop {
     private final ShadowMap shadowMap;
 
     public MainLoop() {
-        Display.instance.init(800, 600);
+        Display.instance.initFullScreen();
+//        worldObjects = Arrays.asList(
+//                createCube(10, false, new Vector4f(0, 0, 0, 1), 0),
+//                createCube(1, true, new Vector4f(0, 10, 5, 1), 1)
+//        );
         worldObjects = Arrays.asList(
-                createCube(10, false, new Vector4f(0, 0, 0, 1), 0),
-                createCube(1, true, new Vector4f(0, 10, 5, 1), 1)
+                createSphere(5, false, new Vector4f(0, 0, 0, 1), 0),
+                createSphere(2, false, new Vector4f(3.2f, 5.7f, 0, 1), 0),
+                createSphere(2, false, new Vector4f(-3.2f, 5.7f, 0, 1), 0),
+                createSphere(0.5f, true, new Vector4f(0, 5.5f, 0, 1), 1f),
+                createSphere(0.5f, true, new Vector4f(-3f, 8.5f, 0, 1), 1f)
         );
         this.shaderProgram = new ShaderProgram("/shaders/simple.vert", "/shaders/simple.frag");
         this.camera = new Camera();
         camera.setPosition(new Vector4f(-5, 10, 10, 1));
         camera.setRotation(new Vector4f(-0.6f, -0.5f, 0, 0));
         lightDirection = new Vector4f(2, -3, -1, 0).normalize();
-        shadowMap = new ShadowMap(1024);
+        shadowMap = new ShadowMap(512);
 
         draw();
         Display.instance.update();
@@ -42,7 +50,7 @@ public class MainLoop {
         long lastUpdate = System.currentTimeMillis();
         while(!Display.instance.isClosed()) {
             long time = System.currentTimeMillis();
-            float dt = Math.min((time-lastUpdate)/10000f, 0.01f);
+            float dt = Math.min((time-lastUpdate)/1000f, 0.01f);
             new PhysicsController().applyPhysics(worldObjects, dt);
             draw();
             Display.instance.update();
@@ -110,6 +118,18 @@ public class MainLoop {
             object.setPhysicsState(new PhysicsStateImmovable(object, new Position(location)));
         object.setCollisionModel(CollisionMesh.createCube(object, size));
         object.setMesh(new CubeMesh(size, size, size));
+
+        return object;
+    }
+
+    private static WorldObject createSphere(float size, boolean moveable, Vector4f location, float mass) {
+        WorldObject object = new WorldObject();
+        if(moveable)
+            object.setPhysicsState(new PhysicsStateNormal(object, new SimplePhysicsProperties(mass), new Position(location)));
+        else
+            object.setPhysicsState(new PhysicsStateImmovable(object, new Position(location)));
+        object.setCollisionModel(new CollisionSphere(object, size));
+        object.setMesh(new SphereMesh(size));
 
         return object;
     }

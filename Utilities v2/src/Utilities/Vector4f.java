@@ -1,5 +1,7 @@
 package Utilities;
 
+import java.util.Objects;
+
 public class Vector4f {
 	
 	public float x, y, z, w;
@@ -84,5 +86,20 @@ public class Vector4f {
 	public float distanceSqTo(Vector4f other){
 		return (other.x-x)*(other.x-x)+(other.y-y)*(other.y-y)+(other.z-z)*(other.z-z);
 	}
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Vector4f vector4f = (Vector4f) o;
+		return Float.compare(vector4f.x, x) == 0 &&
+				Float.compare(vector4f.y, y) == 0 &&
+				Float.compare(vector4f.z, z) == 0 &&
+				Float.compare(vector4f.w, w) == 0;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(x, y, z, w);
+	}
 }
