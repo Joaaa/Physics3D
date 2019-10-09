@@ -68,4 +68,8 @@ public class PhysicsStateNormal extends PhysicsState {
         return Collections.singletonList(new Force(new Vector4f(0, (float) (-9.81*properties.getMass()), 0, 0)));
     }
 
+    @Override
+    public float getMass() {
+        return properties.getMass();
+    }
 }

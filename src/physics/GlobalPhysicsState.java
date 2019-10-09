@@ -57,18 +57,28 @@ public class GlobalPhysicsState {
             return;
         CollisionResult result = state1.getWorldObject().getCollisionModel().checkCollision(state2.getWorldObject().getCollisionModel());
         for(CollisionPoint collisionPoint: result.getCollisionPoints()) {
+            float collisionStrength = 1e4f*Math.min(state1.getMass(), state2.getMass());
+            float collisionFriction = 50*Math.min(state1.getMass(), state2.getMass());
+
             Vector4f normal = collisionPoint.getNormal();
             if(normal.dotProduct(state1.getPosition().getLocation().add(collisionPoint.getPoint().getInverted())) < 0)
                 normal = normal.getInverted();
-            Force force1 = new Force(normal.multiply(collisionPoint.getCollisionDepth()*1e4f));
-            der1.addForce(force1);
 
-            normal = normal.getInverted();
-            Force force2 = new Force(normal.multiply(collisionPoint.getCollisionDepth()*1e4f));
-            der2.addForce(force2 );
+            //TODO: rotational speed
+            Vector4f relSpeed = state2.getLinSpeed().add(state1.getLinSpeed().getInverted());
+            float speed = normal.dotProduct(relSpeed);
 
-            der1.addTorque(Torque.fromForce(force1, collisionPoint.getPoint().add(state1.getPosition().getLocation().getInverted())));
-            der2.addTorque(Torque.fromForce(force2, collisionPoint.getPoint().add(state2.getPosition().getLocation().getInverted())));
+            Vector4f forceVector =
+                    normal.multiply(collisionPoint.getCollisionDepth()*collisionStrength + speed*collisionFriction);
+
+            Force collisionForce1 = new Force(forceVector);
+            der1.addForce(collisionForce1);
+
+            Force collisionForce2 = new Force(forceVector.getInverted());
+            der2.addForce(collisionForce2);
+
+            der1.addTorque(Torque.fromForce(collisionForce1, collisionPoint.getPoint().add(state1.getPosition().getLocation().getInverted())));
+            der2.addTorque(Torque.fromForce(collisionForce2, collisionPoint.getPoint().add(state2.getPosition().getLocation().getInverted())));
         }
     }
 

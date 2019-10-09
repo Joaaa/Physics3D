@@ -22,6 +22,8 @@ public abstract class PhysicsState {
 
     public abstract Vector4f getAngSpeed();
 
+    public abstract float getMass();
+
     public WorldObject getWorldObject() {
         return worldObject;
     }
