@@ -72,7 +72,7 @@ public class Utilities {
 		GL20.glCompileShader(shader);
 		int status = GL20.glGetShaderi(shader, GL20.GL_COMPILE_STATUS);
 		if (status != GL11.GL_TRUE)
-			System.err.println(GL20.glGetShaderInfoLog(shader));
+			System.err.println(GL20.glGetShaderInfoLog(shader, 1000));
 		return shader;
 	}
 	
@@ -84,7 +84,7 @@ public class Utilities {
 		GL20.glLinkProgram(program);
 		int status = GL20.glGetProgrami(program, GL20.GL_LINK_STATUS);
 		if (status != GL11.GL_TRUE) {
-			String error = GL20.glGetProgramInfoLog(program);
+			String error = GL20.glGetProgramInfoLog(program, 1000);
 			System.err.println(error);
 		}
 		return program;

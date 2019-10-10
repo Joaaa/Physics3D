@@ -34,7 +34,7 @@ public class Display {
 	private void init(int w, int h, boolean fullScreen) {
 		glfwSetErrorCallback(errorCallback = GLFWErrorCallback
 				.createPrint(System.err));
-		if (glfwInit() != GL11.GL_TRUE)
+		if (!glfwInit())
 			throw new IllegalStateException("Unable to initialize GLFW");
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_VISIBLE, GL11.GL_FALSE);
@@ -76,7 +76,7 @@ public class Display {
 
 	public void close() {
 		closed = true;
-		GLFW.glfwSetWindowShouldClose(window, GLFW.GLFW_TRUE);
+		GLFW.glfwSetWindowShouldClose(window, true);
 	}
 	
 	public boolean isClosed(){
@@ -86,8 +86,8 @@ public class Display {
 	public void update(){
 		if(closed){
 			System.err.println("Error: window is closed. (Display.update())");
-			errorCallback.release();
-			Input.getKeyCallback().release();
+			errorCallback.close();
+			Input.getKeyCallback().close();
 			glfwTerminate();
 		}
 		IntBuffer w = BufferUtils.createIntBuffer(1), h = BufferUtils.createIntBuffer(1);
@@ -99,7 +99,7 @@ public class Display {
 			height = newHeight;
 			GL11.glViewport(0, 0, width, height);
 		}
-		if(GLFW.glfwWindowShouldClose(window)==GLFW.GLFW_TRUE){
+		if(GLFW.glfwWindowShouldClose(window)){
 			closed = true;
 			return;
 		}

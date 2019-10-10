@@ -25,4 +25,10 @@ public class Torque {
         return new Torque(Vector4f.crossProduct(r, force.getForce()));
     }
 
+    @Override
+    public String toString() {
+        return "Torque{" +
+                "torque=" + torque +
+                '}';
+    }
 }

@@ -21,17 +21,17 @@ public class MainLoop {
 
     public MainLoop() {
         Display.instance.initFullScreen();
-//        worldObjects = Arrays.asList(
-//                createCube(10, false, new Vector4f(0, 0, 0, 1), 0),
-//                createCube(1, true, new Vector4f(0, 10, 5, 1), 1)
-//        );
         worldObjects = Arrays.asList(
-                createSphere(5, false, new Vector4f(0, 0, 0, 1), 0),
-                createSphere(2, false, new Vector4f(3.2f, 5.7f, 0, 1), 0),
-                createSphere(2, false, new Vector4f(-3.2f, 5.7f, 0, 1), 0),
-                createSphere(0.5f, true, new Vector4f(0, 5.5f, 0, 1), 1f),
-                createSphere(0.5f, true, new Vector4f(-3f, 8.5f, 0, 1), 1f)
+                createCube(10, false, new Vector4f(0, 0, 0, 1), 0),
+                createCube(1, true, new Vector4f(-1, 7, 0, 1), 1)
         );
+//        worldObjects = Arrays.asList(
+//                createSphere(5, false, new Vector4f(0, 0, 0, 1), 0),
+//                createSphere(2, false, new Vector4f(3.2f, 5.7f, 0, 1), 0),
+//                createSphere(2, false, new Vector4f(-3.2f, 5.7f, 0, 1), 0),
+//                createSphere(0.5f, true, new Vector4f(0, 5.5f, 0, 1), 1f),
+//                createSphere(0.5f, true, new Vector4f(-3f, 8.5f, 0, 1), 1f)
+//        );
         this.shaderProgram = new ShaderProgram("/shaders/simple.vert", "/shaders/simple.frag");
         this.camera = new Camera();
         camera.setPosition(new Vector4f(-5, 10, 10, 1));

@@ -8,7 +8,8 @@ public class SimplePhysicsProperties implements IPhysicsProperties {
 
     public SimplePhysicsProperties(float mass) {
         this.mass = mass;
-        this.inertia = mass/10;
+        // Mass/6 for cube of size 1
+        this.inertia = mass/6;
     }
 
     public float getMass() {
