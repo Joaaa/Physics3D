@@ -32,4 +32,8 @@ public class PhysicsStateImmovable extends PhysicsState {
         return new Vector4f(0, 0, 0, 0);
     }
 
+    @Override
+    public float getMass() {
+        return Float.POSITIVE_INFINITY;
+    }
 }

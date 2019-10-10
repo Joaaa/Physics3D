@@ -19,7 +19,7 @@ public class SphereMesh implements IMesh {
             buffer.addAttribute("Position", 3);
             buffer.addAttribute("Normal", 3);
             buffer.addAttribute("Uv", 2);
-            Utilities.loadObjectToBuffer(getClass().getClassLoader().getResource("src/main/resources/sphere.obj").getFile(), buffer);
+            Utilities.loadObjectToBuffer(getClass().getClassLoader().getResource("sphere.obj").getFile(), buffer);
             buffer.flush();
         }
     }

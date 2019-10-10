@@ -3,13 +3,16 @@ package rendering;
 import Utilities.*;
 import collision.CollisionMesh;
 import collision.CollisionSphere;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import physics.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class MainLoop {
 
@@ -21,21 +24,35 @@ public class MainLoop {
 
     public MainLoop() {
         Display.instance.initFullScreen();
+        GLFW.glfwSwapInterval(0);
         worldObjects = Arrays.asList(
                 createCube(10, false, new Vector4f(0, 0, 0, 1), 0),
                 createCube(1, true, new Vector4f(-1, 7, 0, 1), 1)
         );
-//        worldObjects = Arrays.asList(
+//        worldObjects = new ArrayList<>(Arrays.asList(
 //                createSphere(5, false, new Vector4f(0, 0, 0, 1), 0),
-//                createSphere(2, false, new Vector4f(3.2f, 5.7f, 0, 1), 0),
-//                createSphere(2, false, new Vector4f(-3.2f, 5.7f, 0, 1), 0),
-//                createSphere(0.5f, true, new Vector4f(0, 5.5f, 0, 1), 1f),
-//                createSphere(0.5f, true, new Vector4f(-3f, 8.5f, 0, 1), 1f)
-//        );
+//                createSphere(1.5f, false, new Vector4f(3.2f, 4.7f, 0, 1), 0),
+//                createSphere(1.5f, false, new Vector4f(-3.2f, 4.7f, 0, 1), 0),
+//                createSphere(1.5f, false, new Vector4f(0, 4.7f, 3.2f, 1), 0),
+//                createSphere(1.5f, false, new Vector4f(0, 4.7f, -3.2f, 1), 0),
+//                createSphere(1.5f, false, new Vector4f(3.2f, 3.7f, 3.2f, 1), 0),
+//                createSphere(1.5f, false, new Vector4f(-3.2f, 3.7f, 3.2f, 1), 0),
+//                createSphere(1.5f, false, new Vector4f(3.2f, 3.7f, -3.2f, 1), 0),
+//                createSphere(1.5f, false, new Vector4f(-3.2f, 3.7f, -3.2f, 1), 0),
+//                createSphere(1f, true, new Vector4f(0, 200f, 0f, 1), 10f)
+//        ));
+//
+//        Random random = new Random();
+//        for (int i = 0; i < 200; i++) {
+//            float size = random.nextFloat()*0.3f+0.2f;
+//            float mass = size*size*size*100;
+//            worldObjects.add(createSphere(size, true, new Vector4f(random.nextFloat()*6-3, random.nextFloat()*10+5.5f, random.nextFloat()*6-3, 1), mass));
+//        }
+
         this.shaderProgram = new ShaderProgram("/shaders/simple.vert", "/shaders/simple.frag");
         this.camera = new Camera();
-        camera.setPosition(new Vector4f(-5, 10, 10, 1));
-        camera.setRotation(new Vector4f(-0.6f, -0.5f, 0, 0));
+        camera.setPosition(new Vector4f(-5, 15, 10, 1));
+        camera.setRotation(new Vector4f(-0.8f, -0.5f, 0, 0));
         lightDirection = new Vector4f(2, -3, -1, 0).normalize();
         shadowMap = new ShadowMap(512);
 
