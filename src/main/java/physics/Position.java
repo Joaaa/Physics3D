@@ -6,7 +6,7 @@ import Utilities.Vector4f;
 public class Position {
 
     private final Vector4f location;
-    private final Matrix4f rotation;
+    private final Matrix4f rotationMatrix;
 
     public Position() {
         this(new Vector4f(0, 0, 0, 1));
@@ -16,42 +16,39 @@ public class Position {
         this(location, Matrix4f.getIdentityMatrix());
     }
 
-    public Position(Vector4f location, Matrix4f rotation) {
+    public Position(Vector4f location, Matrix4f rotationMatrix) {
         this.location = location;
-        this.rotation = rotation;
+        this.rotationMatrix = rotationMatrix;
     }
 
     public Vector4f getLocation() {
         return location;
     }
 
-    public Matrix4f getRotation() {
-        return rotation;
+    public Matrix4f getRotationMatrix() {
+        return rotationMatrix;
     }
 
     public Position applyTranslation(Vector4f translation) {
-        return new Position(this.location.add(translation), this.rotation);
+        return new Position(this.location.add(translation), this.rotationMatrix);
     }
 
     public Position applyRotation(Vector4f rotation) {
-        Matrix4f newRotation = this.rotation;
+        if(new Vector4f(0, 0, 0, 1).leftMult(this.rotationMatrix).getLength() > 0.0001)
+            throw new IllegalStateException("Invalid rotation matrix");
+        Matrix4f newRotation = this.rotationMatrix;
         float angle = rotation.getLength();
         if(angle > 0)
-            newRotation = this.rotation.leftMult(Matrix4f.getRotationMatrix(rotation, angle));
+            newRotation = newRotation.leftMult(Matrix4f.getRotationMatrix(rotation, angle));
 
         return new Position(this.location, newRotation);
     }
 
     public Position applyChange(Vector4f translation, Vector4f rotation) {
-        Matrix4f newRotation = this.rotation;
-        float angle = rotation.getLength();
-        if(angle > 0)
-            newRotation = this.rotation.leftMult(Matrix4f.getRotationMatrix(rotation, angle));
-
-        return new Position(this.location.add(translation), newRotation);
+        return applyRotation(rotation).applyTranslation(translation);
     }
 
     public Matrix4f getTransformation() {
-        return getRotation().leftMult(Matrix4f.getTranslationMatrix(getLocation()));
+        return getRotationMatrix().leftMult(Matrix4f.getTranslationMatrix(getLocation()));
     }
 }

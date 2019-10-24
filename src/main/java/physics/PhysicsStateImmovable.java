@@ -33,6 +33,11 @@ public class PhysicsStateImmovable extends PhysicsState {
     }
 
     @Override
+    public Vector4f getSpeedAt(Vector4f point) {
+        return new Vector4f(0, 0, 0, 0);
+    }
+
+    @Override
     public float getMass() {
         return Float.POSITIVE_INFINITY;
     }

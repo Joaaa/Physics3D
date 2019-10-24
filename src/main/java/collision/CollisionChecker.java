@@ -5,21 +5,49 @@ import Utilities.Vector4f;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class CollisionChecker {
 
     public static CollisionResult checkMeshMeshCollision(CollisionMesh mesh1, CollisionMesh mesh2) {
-        List<CollisionPoint> points = new ArrayList<>();
+        List<TriangleCollisionResult> points = new ArrayList<>();
         for(MeshTriangle t1: mesh1.getTransformedFaces()) {
             for(MeshTriangle t2: mesh2.getTransformedFaces()) {
-                CollisionPoint p = t1.checkCollision(t2);
-                if(p != null) {
-                    points.add(p);
+                TriangleCollisionResult result = t1.checkCollision(t2);
+                if(result != null) {
+                    points.add(result);
+                    System.out.println("Collision result:"+result);
                 }
             }
         }
+        if(points.stream().mapToDouble(TriangleCollisionResult::getLength).sum() < 0.0001f)
+            return new CollisionResult(Collections.emptyList());
+        float bestDepth = 0;
+        Vector4f totalPoint = new Vector4f(0, 0, 0, 0);
+        Vector4f totalNormal = new Vector4f(0, 0, 0, 0);
+        float totalWeight = 0;
+        for(TriangleCollisionResult point: points) {
+            bestDepth = Math.max(bestDepth, point.getDepth());
+            totalPoint = totalPoint.add(point.getMiddle().multiply(point.getLength()));
+            totalNormal = totalNormal.add(point.getNormal().multiply(point.getLength()));
+            totalWeight += point.getLength();
+        }
 
-        return new CollisionResult(points);
+        return new CollisionResult(
+                Collections.singletonList(
+                        new CollisionPoint(
+                                totalPoint.multiply(1f/totalWeight),
+                                totalNormal.multiply(1f/totalWeight),
+                                bestDepth
+                        )
+                )
+        );
+//        return new CollisionResult(
+//                Collections.singletonList(
+//                        points.get(new Random().nextInt(points.size()))
+//                )
+//        );
+//        return new CollisionResult(points);
     }
 
     public static CollisionResult checkMeshSphereCollision(CollisionMesh mesh, CollisionSphere sphere) {

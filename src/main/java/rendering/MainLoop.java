@@ -27,8 +27,21 @@ public class MainLoop {
         GLFW.glfwSwapInterval(0);
         worldObjects = Arrays.asList(
                 createCube(10, false, new Vector4f(0, 0, 0, 1), 0),
-                createCube(1, true, new Vector4f(-1, 7, 0, 1), 1)
+                createCube(1, true, new Vector4f(-1, 7, 0, 1), 1),
+                createCube(1, true, new Vector4f(0, 6, 5, 1), 1),
+                createCube(1, true, new Vector4f(-5.25f, 5.5f, 0, 1), 1)
         );
+//        worldObjects = Arrays.asList(
+//                createCube(1, true, new Vector4f(5, 5, 5, 1), 1),
+//                createCube(1, true, new Vector4f(-5, 10, 0, 1), 1)
+//        );
+//        worldObjects.get(0).setPhysicsState(new PhysicsStateNormal(
+//                worldObjects.get(0),
+//                new SimplePhysicsProperties(1),
+//                new Position(new Vector4f(0, 10, 0, 1)),
+//                new Vector4f(0, 0, 0, 1),
+//                new Vector4f(1, 2, 3, 1)
+//        ));
 //        worldObjects = new ArrayList<>(Arrays.asList(
 //                createSphere(5, false, new Vector4f(0, 0, 0, 1), 0),
 //                createSphere(1.5f, false, new Vector4f(3.2f, 4.7f, 0, 1), 0),
@@ -64,10 +77,10 @@ public class MainLoop {
             e.printStackTrace();
         }
 
-        long lastUpdate = System.currentTimeMillis();
+        long lastUpdate = System.nanoTime();
         while(!Display.instance.isClosed()) {
-            long time = System.currentTimeMillis();
-            float dt = Math.min((time-lastUpdate)/1000f, 0.01f);
+            long time = System.nanoTime();
+            float dt = Math.min((time-lastUpdate)/1e9f, 0.01f);
             new PhysicsController().applyPhysics(worldObjects, dt);
             draw();
             Display.instance.update();

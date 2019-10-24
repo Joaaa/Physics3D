@@ -10,6 +10,7 @@ public class PhysicsController {
     public void applyPhysics(List<WorldObject> worldObjects, float dt) {
         if(dt == 0)
             return;
+
         GlobalPhysicsState y = new GlobalPhysicsState(worldObjects.stream().map(WorldObject::getPhysicsState).collect(Collectors.toList()));
         GlobalStateDerivative k1 = y.getDerivative();
         GlobalStateDerivative k2 = y.applyDerivative(k1, dt/2).getDerivative();

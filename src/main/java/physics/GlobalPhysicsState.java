@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class GlobalPhysicsState {
+public class GlobalPhysicsState implements IState<World, GlobalStateDerivative> {
 
     private final List<PhysicsState> physicsStates;
 
@@ -21,6 +21,7 @@ public class GlobalPhysicsState {
         return physicsStates;
     }
 
+    @Override
     public GlobalPhysicsState applyDerivative(GlobalStateDerivative globalStateDerivative, float dt) {
         List<StateDerivative> derivatives = globalStateDerivative.getStateDerivatives();
         return new GlobalPhysicsState(
@@ -30,6 +31,12 @@ public class GlobalPhysicsState {
         );
     }
 
+    @Override
+    public void setState(World object) {
+        //TODO
+    }
+
+    @Override
     public GlobalStateDerivative getDerivative() {
         for(PhysicsState physicsState: physicsStates) {
             physicsState.getWorldObject().setPhysicsState(physicsState);
@@ -57,15 +64,14 @@ public class GlobalPhysicsState {
             return;
         CollisionResult result = state1.getWorldObject().getCollisionModel().checkCollision(state2.getWorldObject().getCollisionModel());
         for(CollisionPoint collisionPoint: result.getCollisionPoints()) {
-            float collisionStrength = 1e4f*Math.min(state1.getMass(), state2.getMass());
+            float collisionStrength = 1e3f*Math.min(state1.getMass(), state2.getMass());
             float collisionFriction = 50*Math.min(state1.getMass(), state2.getMass());
 
             Vector4f normal = collisionPoint.getNormal();
             if(normal.dotProduct(state1.getPosition().getLocation().add(collisionPoint.getPoint().getInverted())) < 0)
                 normal = normal.getInverted();
 
-            //TODO: rotational speed
-            Vector4f relSpeed = state2.getLinSpeed().add(state1.getLinSpeed().getInverted());
+            Vector4f relSpeed = state2.getSpeedAt(collisionPoint.getPoint()).add(state1.getSpeedAt(collisionPoint.getPoint()).getInverted());
             float speed = normal.dotProduct(relSpeed);
 
             Vector4f forceVector =

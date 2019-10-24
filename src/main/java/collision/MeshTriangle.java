@@ -3,6 +3,7 @@ package collision;
 import Utilities.Matrix4f;
 import Utilities.Vector4f;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -80,7 +81,7 @@ public class MeshTriangle {
         return new CollisionPoint(corner, normal, depth);
     }
 
-    public CollisionPoint checkCollision(MeshTriangle other) {
+    public TriangleCollisionResult checkCollision(MeshTriangle other) {
         // Are planes parallel?
         if(Math.abs(getNormal().dotProduct(other.getNormal())) > 0.9999)
             return null;
@@ -91,7 +92,6 @@ public class MeshTriangle {
         float d21 = this.getNormal().dotProduct(other.p1) + this.getPlanarDistance();
         float d22 = this.getNormal().dotProduct(other.p2) + this.getPlanarDistance();
         float d23 = this.getNormal().dotProduct(other.p3) + this.getPlanarDistance();
-//        System.out.println(Arrays.toString(new float[]{d11, d12, d13, d21, d22, d23}));
 
         // Early stop
         if(allSameSide(d11, d12, d13) || allSameSide(d21, d22, d23))
@@ -112,19 +112,32 @@ public class MeshTriangle {
         float p21 = D.dotProduct(other.p1.add(Oinv));
         float p22 = D.dotProduct(other.p2.add(Oinv));
         float p23 = D.dotProduct(other.p3.add(Oinv));
+//        System.out.println(Arrays.toString(new Object[]{p1, p2, p3, other.p1, other.p2, other.p3}));
+//        System.out.println(Arrays.toString(new float[]{d11, d12, d13, d21, d22, d23}));
+//        System.out.println(Arrays.toString(new float[]{p11, p12, p13, p21, p22, p23}));
 
-        float t11 = p11+(p12-p11)*d11/(d11-d12);
-        float t12 = p12+(p13-p12)*d12/(d12-d13);
-        float t13 = p13+(p11-p13)*d13/(d13-d11);
-        float t21 = p21+(p22-p21)*d21/(d21-d22);
-        float t22 = p22+(p23-p22)*d22/(d22-d23);
-        float t23 = p23+(p21-p23)*d23/(d23-d21);
+//        float t11 = p11+(p12-p11)*d11/(d11-d12);
+//        float t12 = p12+(p13-p12)*d12/(d12-d13);
+//        float t13 = p13+(p11-p13)*d13/(d13-d11);
+//        float t21 = p21+(p22-p21)*d21/(d21-d22);
+//        float t22 = p22+(p23-p22)*d22/(d22-d23);
+//        float t23 = p23+(p21-p23)*d23/(d23-d21);
 //        System.out.println(Arrays.toString(new float[]{t11, t12, t13, t21, t22, t23}));
+//
+//        float min1 = minFinite(t11, t12, t13);
+//        float max1 = maxFinite(t11, t12, t13);
+//        float min2 = minFinite(t21, t22, t23);
+//        float max2 = maxFinite(t21, t22, t23);
+////        System.out.println(Arrays.toString(new float[]{min1, max1, min2, max2}));
 
-        float min1 = minFinite(t11, t12, t13);
-        float max1 = maxFinite(t11, t12, t13);
-        float min2 = minFinite(t21, t22, t23);
-        float max2 = maxFinite(t21, t22, t23);
+        float[] t1s = tInterval(d11, d12, d13, p11, p12, p13);
+        float[] t2s = tInterval(d21, d22, d23, p21, p22, p23);
+
+        float min1 = t1s[0];
+        float max1 = t1s[1];
+        float min2 = t2s[0];
+        float max2 = t2s[1];
+
 //        System.out.println(Arrays.toString(new float[]{min1, max1, min2, max2}));
 
         if(min1 > max2 || min2 > max1)
@@ -134,15 +147,47 @@ public class MeshTriangle {
         float t2 = Math.min(max1, max2);
         float t = (t1+t2)/2f;
         Vector4f intersectionMiddle = O.add(D.multiply(t));
+        System.out.println(t1+", "+t2+", "+t);
 
-        float minDistT1 = -largestNegative(d11, d12, d13);
-        float minDistT2 = -largestNegative(d21, d22, d23);
+        float minDistT1 = -Math.min(Math.min(d11, d12), d13);//-largestNegative(d11, d12, d13);
+        float minDistT2 = -Math.min(Math.min(d21, d22), d23);//-largestNegative(d21, d22, d23);
 
         Vector4f n = this.normal;
         if(minDistT1 < minDistT2)
             n = other.normal;
 
-        return new CollisionPoint(intersectionMiddle, n, Math.min(minDistT1, minDistT2));
+        float depth = Math.min(minDistT1, minDistT2);
+
+        return new TriangleCollisionResult(O.add(D.multiply(t1)), O.add(D.multiply(t2)), n , depth);
+//        return new CollisionPoint(intersectionMiddle, n, Math.min(minDistT1, minDistT2));
+    }
+
+    private float[] tInterval(float d1, float d2, float d3, float p1, float p2, float p3) {
+        float min = Float.POSITIVE_INFINITY;
+        float max = Float.NEGATIVE_INFINITY;
+        if(d1*d2 < 0) {
+            float t1 = p1+(p2-p1)*d1/(d1-d2);
+            if(t1 < min)
+                min = t1;
+            if(t1 > max)
+                max = t1;
+        }
+        if(d2*d3 < 0) {
+            float t2 = p2+(p3-p2)*d2/(d2-d3);
+            if(t2 < min)
+                min = t2;
+            if(t2 > max)
+                max = t2;
+        }
+        if(d3*d1 < 0) {
+            float t3 = p3+(p1-p3)*d3/(d3-d1);
+            if(t3 < min)
+                min = t3;
+            if(t3 > max)
+                max = t3;
+        }
+
+        return new float[]{min, max};
     }
 
     private float minFinite(float t1, float t2, float t3) {
@@ -164,7 +209,7 @@ public class MeshTriangle {
     }
 
     private boolean allSameSide(float d1, float d2, float d3) {
-        return (d1 > 0 && d2 > 0 && d3 > 0) || (d1 < 0 && d2 < 0 && d3 < 0);
+        return (d1 >= 0 && d2 >= 0 && d3 >= 0) || (d1 <= 0 && d2 <= 0 && d3 <= 0);
     }
 
     private float largestNegative(float d1, float d2, float d3) {

@@ -22,6 +22,10 @@ public abstract class PhysicsState {
 
     public abstract Vector4f getAngSpeed();
 
+    public Vector4f getSpeedAt(Vector4f point) {
+        return getLinSpeed().add(Vector4f.crossProduct(getAngSpeed(), point.add(getPosition().getLocation().getInverted())));
+    }
+
     public abstract float getMass();
 
     public WorldObject getWorldObject() {
