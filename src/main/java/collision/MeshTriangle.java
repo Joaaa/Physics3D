@@ -147,7 +147,7 @@ public class MeshTriangle {
         float t2 = Math.min(max1, max2);
         float t = (t1+t2)/2f;
         Vector4f intersectionMiddle = O.add(D.multiply(t));
-        System.out.println(t1+", "+t2+", "+t);
+//        System.out.println(t1+", "+t2+", "+t);
 
         float minDistT1 = -Math.min(Math.min(d11, d12), d13);//-largestNegative(d11, d12, d13);
         float minDistT2 = -Math.min(Math.min(d21, d22), d23);//-largestNegative(d21, d22, d23);
