@@ -1,5 +1,7 @@
 package rendering;
 
+import Gui.Font;
+import Gui.TextDrawer;
 import Utilities.*;
 import collision.CollisionMesh;
 import collision.CollisionSphere;
@@ -16,7 +18,6 @@ import java.util.Random;
 
 public class MainLoop {
 
-    private final List<WorldObject> worldObjects;
     private final ShaderProgram shaderProgram;
     private final Camera camera;
     private final Vector4f lightDirection;
@@ -24,8 +25,8 @@ public class MainLoop {
 
     public MainLoop() {
         Display.instance.initFullScreen();
-        GLFW.glfwSwapInterval(0);
-        worldObjects = Arrays.asList(
+//        GLFW.glfwSwapInterval(0);
+        List<WorldObject> worldObjects = Arrays.asList(
                 createCube(10, false, new Vector4f(0, 0, 0, 1), 0),
                 createCube(1, true, new Vector4f(-1, 7, 0, 1), 1),
                 createCube(1, true, new Vector4f(0, 6, 5, 1), 1),
@@ -68,8 +69,12 @@ public class MainLoop {
         camera.setRotation(new Vector4f(-0.8f, -0.5f, 0, 0));
         lightDirection = new Vector4f(2, -3, -1, 0).normalize();
         shadowMap = new ShadowMap(512);
+        TextDrawer textDrawer = new TextDrawer(new Font("2"));
+        FPSCounter fpsCounter = new FPSCounter();
 
-        draw();
+        World world = new World(worldObjects);
+
+        draw(world);
         Display.instance.update();
         try {
             Thread.sleep(1000);
@@ -77,19 +82,25 @@ public class MainLoop {
             e.printStackTrace();
         }
 
-        long lastUpdate = System.nanoTime();
+        PhysicsController controller = new PhysicsController(world);
+        PhysicsRunnerThread physicsRunnerThread = new PhysicsRunnerThread(controller, 1f);
+        physicsRunnerThread.start();
+        Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+
         while(!Display.instance.isClosed()) {
-            long time = System.nanoTime();
-            float dt = Math.min((time-lastUpdate)/1e9f, 0.01f);
-            new PhysicsController().applyPhysics(worldObjects, dt);
-            draw();
+            draw(physicsRunnerThread.getWorld());
+
+            textDrawer.drawText("FPS: "+fpsCounter.getFps(), 10, 4);
+            textDrawer.drawText("Physics FPS: "+physicsRunnerThread.getFps(), 10, 36);
+
             Display.instance.update();
             ErrorChecker.check();
-            lastUpdate = time;
+            fpsCounter.update();
         }
+        physicsRunnerThread.end();
     }
 
-    private void draw() {
+    private void draw(World world) {
         shadowMap.start();
         Matrix4f PShadow = Matrix4f.getOrthoProjectionMatrix(20, 20, -20, 20);
         Matrix4f VShadow = Matrix4f.getRotationMatrix(new Vector4f(0, 1, 0, 1),
@@ -99,7 +110,7 @@ public class MainLoop {
                                 (float) -Math.atan2(lightDirection.y, Math.sqrt(lightDirection.x*lightDirection.x+lightDirection.z*lightDirection.z)))
                 );
         Matrix4f VPShadow = VShadow.leftMult(PShadow);
-        for(WorldObject object: worldObjects) {
+        for(WorldObject object: world.getWorldObjects()) {
             drawObjectShadow(object, VPShadow);
         }
 
@@ -109,7 +120,7 @@ public class MainLoop {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
         shaderProgram.use();
-        for(WorldObject object: worldObjects) {
+        for(WorldObject object: world.getWorldObjects()) {
             drawObject(object, camera.getViewMatrix(), camera.getProjectionMatrix(), camera.getInverseMatrix(), shadowMap.getTexture(), VPShadow);
         }
 //        TextureDrawer.drawTexture(shadowMap.getTexture(), Display.instance.getWidth(), Display.instance.getHeight());
@@ -120,6 +131,7 @@ public class MainLoop {
         Matrix4f M = mesh.getModelMatrix().leftMult(object.getPosition().getTransformation());
         GL20.glUniformMatrix4fv(ShadowMap.shadowShader.getUniformLocation("MVP"), false, M.leftMult(VP).toFloatBuffer());
         VertexBuffer vertexBuffer = mesh.getVertexBuffer();
+        vertexBuffer.use();
         vertexBuffer.vertexAttribPointer(ShadowMap.shadowShader.getLocation("pos"), "Position");
         GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, vertexBuffer.getVertexAmount());
     }
@@ -135,6 +147,7 @@ public class MainLoop {
         GL20.glUniformMatrix4fv(shaderProgram.getUniformLocation("shadowMatrix"), false, VPShadow.toFloatBuffer());
         GL20.glUniform3f(shaderProgram.getUniformLocation("lightDir"), lightDirection.x, lightDirection.y, lightDirection.z);
         VertexBuffer vertexBuffer = mesh.getVertexBuffer();
+        vertexBuffer.use();
         vertexBuffer.vertexAttribPointer(shaderProgram.getLocation("pos"), "Position");
         vertexBuffer.vertexAttribPointer(shaderProgram.getLocation("normal"), "Normal");
         GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, vertexBuffer.getVertexAmount());

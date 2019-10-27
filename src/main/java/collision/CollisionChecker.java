@@ -16,7 +16,7 @@ public class CollisionChecker {
                 TriangleCollisionResult result = t1.checkCollision(t2);
                 if(result != null) {
                     points.add(result);
-                    System.out.println("Collision result:"+result);
+//                    System.out.println("Collision result:"+result);
                 }
             }
         }

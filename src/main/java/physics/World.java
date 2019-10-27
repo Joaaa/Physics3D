@@ -7,10 +7,14 @@ import java.util.List;
 
 public class World {
 
-    private ArrayList<WorldObject> worldObjects;
+    private List<WorldObject> worldObjects;
 
     public World() {
         worldObjects = new ArrayList<>();
+    }
+
+    public World(List<WorldObject> worldObjects) {
+        this.worldObjects = worldObjects;
     }
 
     public void addWorldObject(WorldObject worldObject) {
@@ -21,7 +25,7 @@ public class World {
         this.worldObjects.addAll(worldObjects);
     }
 
-    public ArrayList<WorldObject> getWorldObjects() {
+    public List<WorldObject> getWorldObjects() {
         return worldObjects;
     }
 }

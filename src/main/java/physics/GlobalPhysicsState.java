@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class GlobalPhysicsState implements IState<World, GlobalStateDerivative> {
+public class GlobalPhysicsState {
 
     private final List<PhysicsState> physicsStates;
 
@@ -21,7 +21,6 @@ public class GlobalPhysicsState implements IState<World, GlobalStateDerivative> 
         return physicsStates;
     }
 
-    @Override
     public GlobalPhysicsState applyDerivative(GlobalStateDerivative globalStateDerivative, float dt) {
         List<StateDerivative> derivatives = globalStateDerivative.getStateDerivatives();
         return new GlobalPhysicsState(
@@ -31,12 +30,6 @@ public class GlobalPhysicsState implements IState<World, GlobalStateDerivative> 
         );
     }
 
-    @Override
-    public void setState(World object) {
-        //TODO
-    }
-
-    @Override
     public GlobalStateDerivative getDerivative() {
         for(PhysicsState physicsState: physicsStates) {
             physicsState.getWorldObject().setPhysicsState(physicsState);

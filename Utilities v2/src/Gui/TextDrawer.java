@@ -48,7 +48,7 @@ public class TextDrawer {
 		for(int i = 0; i < text.length(); i++){
 			int character = getCharAt(text, i);
 			buffer.use();
-			setupBuffer(drawX, drawY, character);			
+			setupBuffer(drawX, drawY, character);
 			GL20.glVertexAttribPointer(program.getLocation("vert"), 3, GL11.GL_FLOAT, false, 20, 0);
 			GL20.glVertexAttribPointer(program.getLocation("uv"), 2, GL11.GL_FLOAT, false, 20, 12);
 			GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 6);

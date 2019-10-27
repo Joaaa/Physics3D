@@ -2,7 +2,7 @@ package physics;
 
 import java.util.List;
 
-public class GlobalStateDerivative implements IStateDerivative<GlobalPhysicsState> {
+public class GlobalStateDerivative {
 
     private final List<StateDerivative> stateDerivatives;
 
@@ -14,8 +14,4 @@ public class GlobalStateDerivative implements IStateDerivative<GlobalPhysicsStat
         return stateDerivatives;
     }
 
-    @Override
-    public GlobalPhysicsState applyTo(GlobalPhysicsState globalPhysicsState, float dt) {
-        return null;
-    }
 }
