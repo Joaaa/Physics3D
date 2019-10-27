@@ -16,18 +16,18 @@ public class CollisionChecker {
                 TriangleCollisionResult result = t1.checkCollision(t2);
                 if(result != null) {
                     points.add(result);
-                    System.out.println("Collision result:"+result);
+//                    System.out.println("Collision result:"+result);
                 }
             }
         }
         if(points.stream().mapToDouble(TriangleCollisionResult::getLength).sum() < 0.0001f)
             return new CollisionResult(Collections.emptyList());
-        float bestDepth = 0;
+//        float bestDepth = 0;
         Vector4f totalPoint = new Vector4f(0, 0, 0, 0);
         Vector4f totalNormal = new Vector4f(0, 0, 0, 0);
         float totalWeight = 0;
         for(TriangleCollisionResult point: points) {
-            bestDepth = Math.max(bestDepth, point.getDepth());
+//            bestDepth = Math.max(bestDepth, point.getDepth());
             totalPoint = totalPoint.add(point.getMiddle().multiply(point.getLength()));
             totalNormal = totalNormal.add(point.getNormal().multiply(point.getLength()));
             totalWeight += point.getLength();
@@ -38,7 +38,8 @@ public class CollisionChecker {
                         new CollisionPoint(
                                 totalPoint.multiply(1f/totalWeight),
                                 totalNormal.multiply(1f/totalWeight),
-                                bestDepth
+//                                bestDepth
+                                totalWeight/100f
                         )
                 )
         );
