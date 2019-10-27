@@ -57,7 +57,7 @@ public class GlobalPhysicsState {
             return;
         CollisionResult result = state1.getWorldObject().getCollisionModel().checkCollision(state2.getWorldObject().getCollisionModel());
         for(CollisionPoint collisionPoint: result.getCollisionPoints()) {
-            float collisionStrength = 1e3f*Math.min(state1.getMass(), state2.getMass());
+            float collisionStrength = 1e2f*Math.min(state1.getMass(), state2.getMass());
             float collisionFriction = 50*Math.min(state1.getMass(), state2.getMass());
 
             Vector4f normal = collisionPoint.getNormal();

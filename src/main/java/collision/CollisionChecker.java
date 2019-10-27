@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class CollisionChecker {
 
@@ -20,35 +21,32 @@ public class CollisionChecker {
                 }
             }
         }
-        if(points.stream().mapToDouble(TriangleCollisionResult::getLength).sum() < 0.0001f)
-            return new CollisionResult(Collections.emptyList());
-//        float bestDepth = 0;
-        Vector4f totalPoint = new Vector4f(0, 0, 0, 0);
-        Vector4f totalNormal = new Vector4f(0, 0, 0, 0);
-        float totalWeight = 0;
-        for(TriangleCollisionResult point: points) {
-//            bestDepth = Math.max(bestDepth, point.getDepth());
-            totalPoint = totalPoint.add(point.getMiddle().multiply(point.getLength()));
-            totalNormal = totalNormal.add(point.getNormal().multiply(point.getLength()));
-            totalWeight += point.getLength();
-        }
 
         return new CollisionResult(
-                Collections.singletonList(
-                        new CollisionPoint(
-                                totalPoint.multiply(1f/totalWeight),
-                                totalNormal.multiply(1f/totalWeight),
-//                                bestDepth
-                                totalWeight/100f
-                        )
-                )
+                points.stream().map(p -> new CollisionPoint(p.getMiddle(), p.getNormal(), p.getLength())).collect(Collectors.toList())
         );
+
+//        if(points.stream().mapToDouble(TriangleCollisionResult::getLength).sum() < 0.0001f)
+//            return new CollisionResult(Collections.emptyList());
+//
+//        Vector4f totalPoint = new Vector4f(0, 0, 0, 0);
+//        Vector4f totalNormal = new Vector4f(0, 0, 0, 0);
+//        float totalWeight = 0;
+//        for(TriangleCollisionResult point: points) {
+//            totalPoint = totalPoint.add(point.getMiddle().multiply(point.getLength()));
+//            totalNormal = totalNormal.add(point.getNormal().multiply(point.getLength()));
+//            totalWeight += point.getLength();
+//        }
+//
 //        return new CollisionResult(
 //                Collections.singletonList(
-//                        points.get(new Random().nextInt(points.size()))
+//                        new CollisionPoint(
+//                                totalPoint.multiply(1f/totalWeight),
+//                                totalNormal.multiply(1f/totalWeight),
+//                                totalWeight/100f
+//                        )
 //                )
 //        );
-//        return new CollisionResult(points);
     }
 
     public static CollisionResult checkMeshSphereCollision(CollisionMesh mesh, CollisionSphere sphere) {

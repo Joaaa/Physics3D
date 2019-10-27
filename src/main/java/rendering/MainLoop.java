@@ -91,7 +91,7 @@ public class MainLoop {
         }
 
         PhysicsController controller = new PhysicsController(world);
-        PhysicsRunnerThread physicsRunnerThread = new PhysicsRunnerThread(controller, 1f);
+        PhysicsRunnerThread physicsRunnerThread = new PhysicsRunnerThread(controller, 0.2f);
         physicsRunnerThread.start();
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 
