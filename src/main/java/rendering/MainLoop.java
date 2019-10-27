@@ -28,10 +28,16 @@ public class MainLoop {
 //        GLFW.glfwSwapInterval(0);
         List<WorldObject> worldObjects = Arrays.asList(
                 createCube(10, false, new Vector4f(0, 0, 0, 1), 0),
-                createCube(1, true, new Vector4f(-1, 7, 0, 1), 1),
+                createCube(1, true, new Vector4f(-1, 5.5f, 0, 1), 1),
+                createCube(1, true, new Vector4f(-1.6f, 7.5f, 0, 1), 1),
                 createCube(1, true, new Vector4f(0, 6, 5, 1), 1),
+                createCube(1, true, new Vector4f(-5.25f, 5.5f, 0, 1), 1),
                 createCube(1, true, new Vector4f(-5.25f, 5.5f, 0, 1), 1)
         );
+        Matrix4f rot = Matrix4f.getRotationMatrix(new Vector4f(1, 0, 0, 0), (float) Math.PI/4)
+                .leftMult(Matrix4f.getRotationMatrix(new Vector4f(0, 0, 1, 0), (float) Math.PI/4*1.2f));
+        worldObjects.get(5).setPhysicsState(new PhysicsStateNormal(worldObjects.get(5), new SimplePhysicsProperties(1),
+                new Position(new Vector4f(3, 5+(float)Math.sqrt(3)/2, 3, 1), rot), new Vector4f(0, 0, 0, 0), new Vector4f(-2, 5, 0, 0)));
 //        worldObjects = Arrays.asList(
 //                createCube(1, true, new Vector4f(5, 5, 5, 1), 1),
 //                createCube(1, true, new Vector4f(-5, 10, 0, 1), 1)
@@ -67,6 +73,8 @@ public class MainLoop {
         this.camera = new Camera();
         camera.setPosition(new Vector4f(-5, 15, 10, 1));
         camera.setRotation(new Vector4f(-0.8f, -0.5f, 0, 0));
+//        camera.setPosition(new Vector4f(3, 6f, 5, 1));
+//        camera.setRotation(new Vector4f(-0.2f, 0, 0, 0));
         lightDirection = new Vector4f(2, -3, -1, 0).normalize();
         shadowMap = new ShadowMap(512);
         TextDrawer textDrawer = new TextDrawer(new Font("2"));

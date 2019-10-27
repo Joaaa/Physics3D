@@ -10,7 +10,12 @@ public class CollisionPoint {
 
     public CollisionPoint(Vector4f point, Vector4f normal, float CollisionDepth) {
         this.point = point;
-        this.normal = normal.normalize();
+        float s = normal.getLength();
+        if(s < 0.0001) {
+            this.normal = new Vector4f(1, 0, 0, 0);
+        } else {
+            this.normal = normal.multiply(1f/s);
+        }
         collisionDepth = CollisionDepth;
     }
 

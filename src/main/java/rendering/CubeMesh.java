@@ -13,15 +13,6 @@ public class CubeMesh implements IMesh {
 
     public CubeMesh(float xSize, float ySize, float zSize) {
         this.modelMatrix = Matrix4f.getScaleMatrix(new Vector4f(xSize, ySize, zSize, 1));
-
-        if(buffer == null) {
-            buffer = new VertexBuffer();
-            buffer.addAttribute("Position", 3);
-            buffer.addAttribute("Normal", 3);
-            buffer.addAttribute("Uv", 2);
-            Utilities.loadObjectToBuffer(getClass().getClassLoader().getResource("cube.obj").getFile(), buffer);
-            buffer.flush();
-        }
     }
 
     @Override
@@ -31,6 +22,14 @@ public class CubeMesh implements IMesh {
 
     @Override
     public VertexBuffer getVertexBuffer() {
+        if(buffer == null) {
+            buffer = new VertexBuffer();
+            buffer.addAttribute("Position", 3);
+            buffer.addAttribute("Normal", 3);
+            buffer.addAttribute("Uv", 2);
+            Utilities.loadObjectToBuffer(getClass().getClassLoader().getResource("cube.obj").getFile(), buffer);
+            buffer.flush();
+        }
         return buffer;
     }
 }

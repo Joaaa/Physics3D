@@ -5,7 +5,7 @@ import rendering.WorldObject;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PhysicsController extends Thread {
+public class PhysicsController {
 
     private final World world;
 

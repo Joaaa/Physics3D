@@ -26,7 +26,7 @@ public class Font {
 	public Font(String name, int size){
 		this.size = size;
 		texture = new Texture(name+".png");
-		Scanner scan = new Scanner(System.class.getResourceAsStream("/"+name+".fnt"));
+		Scanner scan = new Scanner(Font.class.getResourceAsStream("/"+name+".fnt"));
 		while(scan.hasNextLine()){
 			String line = scan.nextLine();
 			if(line.startsWith("char ")){
