@@ -50,7 +50,7 @@ void main(){
     float visibility = 1;
     float shadowStrength = 0.4;
     for(int i = 0; i < 16; i++){
-        if(depth-((2*texture(shadowTexture, shadowUv + poissonDisk[i]/200).r)-1) > 0.05*tan(acos(clamp(diffuse, 0.2, 1)))){
+        if(depth-((2*texture(shadowTexture, shadowUv + poissonDisk[i]/500).r)-1) > 0.01*tan(acos(clamp(diffuse, 0.2, 1)))){
             visibility -= shadowStrength/16;
         }
     }

@@ -9,7 +9,7 @@ public class Camera {
 		position = new Vector4f(0, 0, 0, 0);
 		rotation = new Vector4f(0, 0, 0, 0);
 		updateViewMatrix();
-		setProjection(true, Display.instance.getWidth(), Display.instance.getHeight(), 1, 100);
+		setProjection(true, Display.instance.getWidth(), Display.instance.getHeight(), 0.1f, 100);
 	}
 	
 	public void setPosition(Vector4f pos){

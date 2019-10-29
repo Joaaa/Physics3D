@@ -24,7 +24,7 @@ public class PhysicsRunnerThread extends Thread {
         while(running) {
             long time = System.nanoTime();
             float dt = (time - lastUpdate) / (1e9f / simulationSpeed);
-            dt = Math.min(dt, 0.01f);
+            dt = Math.min(dt, 0.001f);
 
             controller.update(dt);
 

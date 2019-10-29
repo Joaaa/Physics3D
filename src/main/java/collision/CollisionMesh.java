@@ -11,6 +11,7 @@ public class CollisionMesh extends CollisionModel {
 
     private final List<Vector4f> corners;
     private final List<MeshTriangle> faces;
+    private float boundingSphereRadius = Float.POSITIVE_INFINITY;
 
     public CollisionMesh(WorldObject worldObject, List<Vector4f> corners, List<MeshTriangle> faces) {
         super(worldObject);
@@ -39,6 +40,10 @@ public class CollisionMesh extends CollisionModel {
     @Override
     public CollisionResult checkCollisionWith(CollisionSphere sphere) {
         return CollisionChecker.checkMeshSphereCollision(this, sphere);
+    }
+
+    public float getBoundingSphereRadius() {
+        return boundingSphereRadius;
     }
 
     public static CollisionMesh createCube(WorldObject o, float width) {
@@ -71,7 +76,9 @@ public class CollisionMesh extends CollisionModel {
                 createTriangle(corners.get(7), corners.get(5), corners.get(6))
         );
 
-        return new CollisionMesh(o, corners, triangles);
+        CollisionMesh collisionMesh = new CollisionMesh(o, corners, triangles);
+        collisionMesh.boundingSphereRadius = corners.get(0).getLength();
+        return collisionMesh;
     }
 
     private static MeshTriangle createTriangle(Vector4f p1, Vector4f p2, Vector4f p3) {

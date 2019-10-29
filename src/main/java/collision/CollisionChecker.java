@@ -11,8 +11,15 @@ import java.util.stream.Collectors;
 public class CollisionChecker {
 
     public static CollisionResult checkMeshMeshCollision(CollisionMesh mesh1, CollisionMesh mesh2) {
+        if(mesh1.getPosition().getLocation().add(mesh2.getPosition().getLocation().getInverted()).getLength()
+                > mesh1.getBoundingSphereRadius()+mesh2.getBoundingSphereRadius())
+            return CollisionResult.EMPTY;
+
         List<TriangleCollisionResult> points = new ArrayList<>();
         for(MeshTriangle t1: mesh1.getTransformedFaces()) {
+            float distToCenter = t1.getNormal().dotProduct(mesh2.getPosition().getLocation().add(t1.getP1().getInverted()));
+            if(Math.abs(distToCenter) > mesh2.getBoundingSphereRadius())
+                continue;
             for(MeshTriangle t2: mesh2.getTransformedFaces()) {
                 TriangleCollisionResult result = t1.checkCollision(t2);
                 if(result != null) {

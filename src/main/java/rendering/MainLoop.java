@@ -30,7 +30,7 @@ public class MainLoop {
                 createCube(10, false, new Vector4f(0, 0, 0, 1), 0),
                 createCube(1, true, new Vector4f(-1, 5.5f, 0, 1), 1),
                 createCube(1, true, new Vector4f(-1.6f, 7.5f, 0, 1), 1),
-                createCube(1, true, new Vector4f(0, 6, 5, 1), 1),
+                createCube(1, true, new Vector4f(3, 10, 3, 1), 1),
                 createCube(1, true, new Vector4f(-5.25f, 5.5f, 0, 1), 1),
                 createCube(1, true, new Vector4f(-5.25f, 5.5f, 0, 1), 1)
         );
@@ -71,12 +71,12 @@ public class MainLoop {
 
         this.shaderProgram = new ShaderProgram("/shaders/simple.vert", "/shaders/simple.frag");
         this.camera = new Camera();
-        camera.setPosition(new Vector4f(-5, 15, 10, 1));
-        camera.setRotation(new Vector4f(-0.8f, -0.5f, 0, 0));
-//        camera.setPosition(new Vector4f(3, 6f, 5, 1));
-//        camera.setRotation(new Vector4f(-0.2f, 0, 0, 0));
+//        camera.setPosition(new Vector4f(-5, 15, 10, 1));
+//        camera.setRotation(new Vector4f(-0.8f, -0.5f, 0, 0));
+        camera.setPosition(new Vector4f(3, 7f, 5, 1));
+        camera.setRotation(new Vector4f(-0.2f, 0, 0, 0));
         lightDirection = new Vector4f(2, -3, -1, 0).normalize();
-        shadowMap = new ShadowMap(512);
+        shadowMap = new ShadowMap(1024);
         TextDrawer textDrawer = new TextDrawer(new Font("2"));
         FPSCounter fpsCounter = new FPSCounter();
 
