@@ -31,7 +31,7 @@ public class MainLoop {
                 createCube(1, true, new Vector4f(-1, 5.5f, 0, 1), 1),
                 createCube(1, true, new Vector4f(-1.6f, 7.5f, 0, 1), 1),
                 createCube(1, true, new Vector4f(3, 10, 3, 1), 1),
-                createCube(1, true, new Vector4f(-5.25f, 5.5f, 0, 1), 1),
+                createCube(1, true, new Vector4f(5.25f, 5.5f, 0, 1), 1),
                 createCube(1, true, new Vector4f(-5.25f, 5.5f, 0, 1), 1)
         );
         Matrix4f rot = Matrix4f.getRotationMatrix(new Vector4f(1, 0, 0, 0), (float) Math.PI/4)
@@ -91,7 +91,7 @@ public class MainLoop {
         }
 
         PhysicsController controller = new PhysicsController(world);
-        PhysicsRunnerThread physicsRunnerThread = new PhysicsRunnerThread(controller, 0.2f);
+        PhysicsRunnerThread physicsRunnerThread = new PhysicsRunnerThread(controller, 0.1f);
         physicsRunnerThread.start();
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 

@@ -10,7 +10,7 @@ uniform mat4 shadowMatrix;
 
 out vec4 outColor;
 
-vec3 color = vec3(1, 1, 1);
+vec3 color = vec3(0.6, 0.6, 0.6);
 
 vec2 poissonDisk[16] = vec2[](
 	vec2(-0.8584739, -0.0105699),
@@ -32,7 +32,7 @@ vec2 poissonDisk[16] = vec2[](
  );
 
 void main(){
-    float diffuse = max(0.1, -dot(normalize(frag_normal), lightDir));
+    float diffuse = 0.6+0.4*max(0.0, -dot(normalize(frag_normal), lightDir));
 
     vec3 viewDirection = normalize(vec3(VP_inv * vec4(0.0, 0.0, 0.0, 1.0) - frag_position));
 
@@ -55,5 +55,7 @@ void main(){
         }
     }
 
-	outColor = vec4((color*diffuse*0.8+specularReflection*0.2)*visibility, 1);
+    diffuse = min(diffuse, visibility);
+
+	outColor = vec4((color*diffuse+specularReflection*0.5), 1);
 }

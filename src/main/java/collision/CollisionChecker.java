@@ -15,13 +15,13 @@ public class CollisionChecker {
                 > mesh1.getBoundingSphereRadius()+mesh2.getBoundingSphereRadius())
             return CollisionResult.EMPTY;
 
-        List<TriangleCollisionResult> points = new ArrayList<>();
+        List<CollisionPoint> points = new ArrayList<>();
         for(MeshTriangle t1: mesh1.getTransformedFaces()) {
             float distToCenter = t1.getNormal().dotProduct(mesh2.getPosition().getLocation().add(t1.getP1().getInverted()));
             if(Math.abs(distToCenter) > mesh2.getBoundingSphereRadius())
                 continue;
             for(MeshTriangle t2: mesh2.getTransformedFaces()) {
-                TriangleCollisionResult result = t1.checkCollision(t2);
+                CollisionPoint result = t1.checkCollision(t2);
                 if(result != null) {
                     points.add(result);
 //                    System.out.println("Collision result:"+result);
@@ -29,9 +29,7 @@ public class CollisionChecker {
             }
         }
 
-        return new CollisionResult(
-                points.stream().map(p -> new CollisionPoint(p.getMiddle(), p.getNormal(), p.getLength())).collect(Collectors.toList())
-        );
+        return new CollisionResult(points);
 
 //        if(points.stream().mapToDouble(TriangleCollisionResult::getLength).sum() < 0.0001f)
 //            return new CollisionResult(Collections.emptyList());

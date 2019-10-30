@@ -81,7 +81,7 @@ public class MeshTriangle {
         return new CollisionPoint(corner, normal, depth);
     }
 
-    public TriangleCollisionResult checkCollision(MeshTriangle other) {
+    public CollisionPoint checkCollision(MeshTriangle other) {
         // Are planes parallel?
         if(Math.abs(getNormal().dotProduct(other.getNormal())) > 0.9999)
             return null;
@@ -156,9 +156,10 @@ public class MeshTriangle {
         if(minDistT1 < minDistT2)
             n = other.normal;
 
-        float depth = Math.min(minDistT1, minDistT2);
+        Vector4f middle = O.add(D.multiply((t1+t2)/2f));
+        float length = D.getLength() * (t2-t1);
 
-        return new TriangleCollisionResult(O.add(D.multiply(t1)), O.add(D.multiply(t2)), n , depth);
+        return new CollisionPoint(middle, n, length);
 //        return new CollisionPoint(intersectionMiddle, n, Math.min(minDistT1, minDistT2));
     }
 
