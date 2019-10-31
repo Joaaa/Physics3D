@@ -31,4 +31,8 @@ public abstract class CollisionModel {
         return CollisionResult.EMPTY;
     }
 
+    public CollisionResult checkCollisionWith(CollisionCuboid cuboid) {
+        return CollisionResult.EMPTY;
+    }
+
 }

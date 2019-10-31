@@ -3,6 +3,7 @@ package rendering;
 import Gui.Font;
 import Gui.TextDrawer;
 import Utilities.*;
+import collision.CollisionCuboid;
 import collision.CollisionMesh;
 import collision.CollisionSphere;
 import org.lwjgl.glfw.GLFW;
@@ -28,11 +29,11 @@ public class MainLoop {
 //        GLFW.glfwSwapInterval(0);
         List<WorldObject> worldObjects = Arrays.asList(
                 createCube(10, false, new Vector4f(0, 0, 0, 1), 0),
-                createCube(1, true, new Vector4f(-1, 5.5f, 0, 1), 1),
+                createCube(1, true, new Vector4f(-1, 5.5f, 0.2f, 1), 1),
                 createCube(1, true, new Vector4f(-1.6f, 7.5f, 0, 1), 1),
                 createCube(1, true, new Vector4f(3, 10, 3, 1), 1),
-                createCube(1, true, new Vector4f(5.25f, 5.5f, 0, 1), 1),
-                createCube(1, true, new Vector4f(-5.25f, 5.5f, 0, 1), 1)
+                createCube(1, true, new Vector4f(-5.25f, 6f, 0, 1), 1),
+                createCube(1, true, new Vector4f(0, 0, 0, 1), 1)
         );
         Matrix4f rot = Matrix4f.getRotationMatrix(new Vector4f(1, 0, 0, 0), (float) Math.PI/4)
                 .leftMult(Matrix4f.getRotationMatrix(new Vector4f(0, 0, 1, 0), (float) Math.PI/4*1.2f));
@@ -71,10 +72,10 @@ public class MainLoop {
 
         this.shaderProgram = new ShaderProgram("/shaders/simple.vert", "/shaders/simple.frag");
         this.camera = new Camera();
-//        camera.setPosition(new Vector4f(-5, 15, 10, 1));
-//        camera.setRotation(new Vector4f(-0.8f, -0.5f, 0, 0));
-        camera.setPosition(new Vector4f(3, 7f, 5, 1));
-        camera.setRotation(new Vector4f(-0.2f, 0, 0, 0));
+        camera.setPosition(new Vector4f(-5.5f, 10, 5.5f, 1));
+        camera.setRotation(new Vector4f(-0.8f, -0.8f, 0, 0));
+//        camera.setPosition(new Vector4f(3, 7f, 5, 1));
+//        camera.setRotation(new Vector4f(-0.2f, 0, 0, 0));
         lightDirection = new Vector4f(2, -3, -1, 0).normalize();
         shadowMap = new ShadowMap(1024);
         TextDrawer textDrawer = new TextDrawer(new Font("2"));
@@ -91,7 +92,7 @@ public class MainLoop {
         }
 
         PhysicsController controller = new PhysicsController(world);
-        PhysicsRunnerThread physicsRunnerThread = new PhysicsRunnerThread(controller, 0.1f);
+        PhysicsRunnerThread physicsRunnerThread = new PhysicsRunnerThread(controller, 0.2f);
         physicsRunnerThread.start();
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 
@@ -167,7 +168,8 @@ public class MainLoop {
             object.setPhysicsState(new PhysicsStateNormal(object, new SimplePhysicsProperties(mass), new Position(location)));
         else
             object.setPhysicsState(new PhysicsStateImmovable(object, new Position(location)));
-        object.setCollisionModel(CollisionMesh.createCube(object, size));
+//        object.setCollisionModel(CollisionMesh.createCube(object, size));
+        object.setCollisionModel(new CollisionCuboid(object, size/2f));
         object.setMesh(new CubeMesh(size, size, size));
 
         return object;

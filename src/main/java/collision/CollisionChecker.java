@@ -1,14 +1,60 @@
 package collision;
 
 import Utilities.Vector4f;
+import util.MathUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class CollisionChecker {
+
+    public static CollisionResult checkCuboidCuboidCollision(CollisionCuboid cm1, CollisionCuboid cm2) {
+        if(cm1.getPosition().getLocation().add(cm2.getPosition().getLocation().getInverted()).getLength()
+                > cm1.getBoundingSphereRadius()+cm2.getBoundingSphereRadius())
+            return CollisionResult.EMPTY;
+        Cuboid cuboid1 = cm1.getTransformedCuboid();
+        Cuboid cuboid2 = cm2.getTransformedCuboid();
+
+        List<CollisionPoint> result = new ArrayList<>(checkCorners(cuboid1, cuboid2));
+        result.addAll(checkCorners(cuboid2, cuboid1));
+        if(result.isEmpty()) {
+            for (LineSegment edge : cuboid2.getTransformedEdges())
+                result.addAll(cuboid1.checkCollision(edge));
+            for (LineSegment edge : cuboid1.getTransformedEdges())
+                result.addAll(cuboid2.checkCollision(edge));
+        }
+        return new CollisionResult(result);
+    }
+
+    private static List<CollisionPoint> checkCorners(Cuboid cuboid1, Cuboid cuboid2) {
+        List<CollisionPoint> collisions = new ArrayList<>();
+
+        Vector4f[] normals = {cuboid1.getXAxis(), cuboid1.getYAxis(), cuboid1.getZAxis()};
+        float[] sizes = {cuboid1.getXSize(), cuboid1.getYSize(), cuboid1.getZSize()};
+
+        for(Vector4f point: cuboid2.getTransformedCorners()) {
+            Vector4f p = point.add(cuboid1.getCenter().getInverted());
+
+            float[] relCoords = {
+                    p.dotProduct(normals[0])/sizes[0],
+                    p.dotProduct(normals[1])/sizes[1],
+                    p.dotProduct(normals[2])/sizes[2]
+            };
+            float[] relCoordsAbs = MathUtils.abs(relCoords);
+            if(!MathUtils.allLessThan(relCoordsAbs, 1))
+                continue;
+
+            int pushAxis = MathUtils.argMax(relCoordsAbs);
+            Vector4f normal = normals[pushAxis];
+            if(relCoords[pushAxis] < 0)
+                normal = normal.getInverted();
+
+            float depth = (1-relCoordsAbs[pushAxis])*sizes[pushAxis];
+
+            collisions.add(new CollisionPoint(p, normal, depth));
+        }
+        return collisions;
+    }
 
     public static CollisionResult checkMeshMeshCollision(CollisionMesh mesh1, CollisionMesh mesh2) {
         if(mesh1.getPosition().getLocation().add(mesh2.getPosition().getLocation().getInverted()).getLength()
